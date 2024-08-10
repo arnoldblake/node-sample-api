@@ -1,0 +1,45 @@
+name: Deploy to Server
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest  # The type of runner that the job will run on
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '22'  # Specify the Node.js version you need
+        
+    - name: Install Dependencies
+      run: npm install  
+      
+    - name: Compile TypeScript
+      run: npm run build  # Assumes you have a "build" script in your package.json
+
+    - name: Add SSH Key and Server to Known Hosts
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts 
+        chmod 700 ~/.ssh        
+        echo "$DEPLOY_KEY" > deploy_key.pem
+        chmod 600 deploy_key.pem
+        
+    - name: Rsync Artifacts to Apache Web Server
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        SERVER_IP_ADDRESS: ${{ secrets.SERVER_IP_ADDRESS }}
+        USERNAME: ${{ secrets.USERNAME }}
+        DEST_PATH: ${{ secrets.DEST_PATH }}
+      run: |
+        rsync -avz --delete -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" ./build/ ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
+        rsync -avz --delete -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" package.json ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
