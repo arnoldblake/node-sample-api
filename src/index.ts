@@ -9,7 +9,6 @@ const port = process.env.PORT || 8080;
 app.get('/status', (req, res) => {
    const status = {
       'Status': 'Running',
-      'Hello': 'World',
    };
 
    res.send(status);
