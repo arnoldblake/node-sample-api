@@ -1,5 +1,4 @@
 {
-  "author": "Blake Arnold",
   "name": "example-api",
   "version": "1.0.0",
   "description": "",
@@ -11,7 +10,7 @@
     "lint": "npx eslint **/*.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Blake Arnold",
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2"
