@@ -41,5 +41,5 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         DEST_PATH: ${{ secrets.DEST_PATH }}
       run: |
-        rsync -avz --delete -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" ./build/ ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
-        rsync -avz --delete -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" package.json ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
+        rsync -avz -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" ./build/ ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
+        rsync -avz -e "ssh -i deploy_key.pem -o StrictHostKeyChecking=no" package.json ${USERNAME}@${SERVER_IP_ADDRESS}:${DEST_PATH}
